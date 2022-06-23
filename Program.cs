@@ -1,6 +1,7 @@
 ﻿using System;
 using static System.Console;
 using System.Text;
+using System.Threading;
 
 namespace LangtonsAnt
 {
@@ -28,26 +29,20 @@ namespace LangtonsAnt
 
             SetCursorPosition(0, 0);
             var grayBG = new StringBuilder();
-            BackgroundColor = ConsoleColor.Gray;
+            BackgroundColor = ConsoleColor.DarkGray;
+            grayBG.Append(' ', fieldWidth);
             for (int i = 0; i < fieldHeight; i++)
             {
                 for (int j = 0; j < fieldWidth; j++)
                 {
-                    if (random.Next(100) < 1)
-                    {
-                        //BackgroundColor = ConsoleColor.Black;
-                        //grayBG.Append('#');
+                    if (random.Next(100) < 0) //0 - disable 1 -enable
+                        //This generates black cells
+                        //With chance of 1% but not drawing on map
                         map[j, i] = Cell.Black;
-                        //BackgroundColor = ConsoleColor.Gray;
-                    }
                     else
-                    {
-                        //BackgroundColor = ConsoleColor.Gray;
-                        //grayBG.Append(' ');
                         map[j, i] = Cell.White;
-                    }
-                    //WriteLine(grayBG);
                 }
+                WriteLine(grayBG);
             }
 
             //Don't spawn ANT near the border 33% gap
@@ -58,7 +53,8 @@ namespace LangtonsAnt
             DrawAnt(fieldWidth, fieldHeight);
             for (int i = 0; i < 5000000; i++)
             {
-                if (map[antX, antY] == Cell.Black || map[antX, antY] == Cell.Empty)
+                Thread.Sleep(sleep);
+                if (map[antX, antY] == Cell.Black)
                 {
                     direction = (direction + 1) % 4;
                     map[antX, antY] = Cell.White;
@@ -75,7 +71,6 @@ namespace LangtonsAnt
                     DrawAnt(fieldWidth, fieldHeight);
                 }
             }
-
             ReadKey();
         }
 
@@ -89,8 +84,10 @@ namespace LangtonsAnt
 
         public static void DrawBlackBG()
         {
-            var randomBG = new Random();
             SetCursorPosition(antX, antY);
+            BackgroundColor = ConsoleColor.Black;
+            /* Colorizer
+            var randomBG = new Random();
             if (randomBG.Next(7) == 1)
                 BackgroundColor = ConsoleColor.Black;
             else if (randomBG.Next(7) == 2)
@@ -103,13 +100,16 @@ namespace LangtonsAnt
                 BackgroundColor = ConsoleColor.Yellow;
             else if (randomBG.Next(7) == 6)
                 BackgroundColor = ConsoleColor.Magenta;
+            */
             Write(" ");
         }
 
         public static void DrawWhiteBG()
         {
-            var randomBG = new Random();
             SetCursorPosition(antX, antY);
+            BackgroundColor = ConsoleColor.White;
+            /* Colorizer
+            var randomBG = new Random();
             if (randomBG.Next(7) == 1)
                 BackgroundColor = ConsoleColor.White;
             else if (randomBG.Next(7) == 2)
@@ -122,6 +122,7 @@ namespace LangtonsAnt
                 BackgroundColor = ConsoleColor.Yellow;
             else if (randomBG.Next(7) == 6)
                 BackgroundColor = ConsoleColor.Magenta;
+            */
             Write(" ");
         }
 
@@ -135,19 +136,12 @@ namespace LangtonsAnt
                 Program.antY = fieldHeight - 2;
             if (antY > fieldHeight - 2)
                 Program.antY = 2;
-
-            //SetCursorPosition(antX, antY);
-            //ForegroundColor = ConsoleColor.Red;
-            //Task.Run(() => Beep(1000, 50));
-            //Write("+");
-            //Thread.Sleep(sleep);
         }
 
         public enum Cell
         {
             Black,
-            White,
-            Empty
+            White
         }
     }
 }
