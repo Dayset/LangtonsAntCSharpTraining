@@ -1,13 +1,12 @@
 ﻿using System;
 using static System.Console;
 using System.Text;
-using System.Threading;
 
 namespace LangtonsAnt
 {
     public class Program
     {
-        private static readonly int sleep = 2;
+        private static readonly int sleep = 0;
 
         public static int antX { get; private set; }
         public static int antY { get; private set; }
@@ -15,8 +14,9 @@ namespace LangtonsAnt
 
         private static void Main(string[] args)
         {
-            int fieldWidth = 100;
-            int fieldHeight = 100;
+            ReadKey();
+            int fieldWidth = 480;
+            int fieldHeight = 168;
             CursorVisible = false;
             WindowHeight = fieldHeight;
             WindowWidth = fieldWidth;
@@ -28,14 +28,25 @@ namespace LangtonsAnt
 
             SetCursorPosition(0, 0);
             var grayBG = new StringBuilder();
+            BackgroundColor = ConsoleColor.Gray;
             for (int i = 0; i < fieldHeight; i++)
             {
-                BackgroundColor = ConsoleColor.Gray;
-                grayBG.Append(' ', fieldWidth);
-                WriteLine(grayBG);
                 for (int j = 0; j < fieldWidth; j++)
                 {
-                    map[i, j] = Cell.White;
+                    if (random.Next(100) < 1)
+                    {
+                        //BackgroundColor = ConsoleColor.Black;
+                        //grayBG.Append('#');
+                        map[j, i] = Cell.Black;
+                        //BackgroundColor = ConsoleColor.Gray;
+                    }
+                    else
+                    {
+                        //BackgroundColor = ConsoleColor.Gray;
+                        //grayBG.Append(' ');
+                        map[j, i] = Cell.White;
+                    }
+                    //WriteLine(grayBG);
                 }
             }
 
@@ -43,17 +54,17 @@ namespace LangtonsAnt
             antX = random.Next(fieldWidth / 3, (fieldWidth - (fieldWidth / 3)));
             antY = random.Next(fieldHeight / 3, (fieldHeight - (fieldHeight / 3)));
 
-            direction = random.Next(3);
-            DrawAnt();
-            for (int i = 0; i < 50000; i++)
+            direction = random.Next(0, 4);
+            DrawAnt(fieldWidth, fieldHeight);
+            for (int i = 0; i < 5000000; i++)
             {
-                if (map[antX, antY] == Cell.Black)
+                if (map[antX, antY] == Cell.Black || map[antX, antY] == Cell.Empty)
                 {
                     direction = (direction + 1) % 4;
                     map[antX, antY] = Cell.White;
                     DrawWhiteBG();
                     MoveAnt();
-                    DrawAnt();
+                    DrawAnt(fieldWidth, fieldHeight);
                 }
                 else
                 {
@@ -61,7 +72,7 @@ namespace LangtonsAnt
                     map[antX, antY] = Cell.Black;
                     DrawBlackBG();
                     MoveAnt();
-                    DrawAnt();
+                    DrawAnt(fieldWidth, fieldHeight);
                 }
             }
 
@@ -78,39 +89,65 @@ namespace LangtonsAnt
 
         public static void DrawBlackBG()
         {
+            var randomBG = new Random();
             SetCursorPosition(antX, antY);
-            BackgroundColor = ConsoleColor.Black;
+            if (randomBG.Next(7) == 1)
+                BackgroundColor = ConsoleColor.Black;
+            else if (randomBG.Next(7) == 2)
+                BackgroundColor = ConsoleColor.Red;
+            else if (randomBG.Next(7) == 3)
+                BackgroundColor = ConsoleColor.Green;
+            else if (randomBG.Next(7) == 4)
+                BackgroundColor = ConsoleColor.Blue;
+            else if (randomBG.Next(7) == 5)
+                BackgroundColor = ConsoleColor.Yellow;
+            else if (randomBG.Next(7) == 6)
+                BackgroundColor = ConsoleColor.Magenta;
             Write(" ");
         }
 
         public static void DrawWhiteBG()
         {
+            var randomBG = new Random();
             SetCursorPosition(antX, antY);
-            BackgroundColor = ConsoleColor.White;
+            if (randomBG.Next(7) == 1)
+                BackgroundColor = ConsoleColor.White;
+            else if (randomBG.Next(7) == 2)
+                BackgroundColor = ConsoleColor.Red;
+            else if (randomBG.Next(7) == 3)
+                BackgroundColor = ConsoleColor.Green;
+            else if (randomBG.Next(7) == 4)
+                BackgroundColor = ConsoleColor.Blue;
+            else if (randomBG.Next(7) == 5)
+                BackgroundColor = ConsoleColor.Yellow;
+            else if (randomBG.Next(7) == 6)
+                BackgroundColor = ConsoleColor.Magenta;
             Write(" ");
         }
 
-        public static void DrawAnt()
+        public static void DrawAnt(int fieldWidth, int fieldHeight)
         {
-            SetCursorPosition(antX, antY);
-            ForegroundColor = ConsoleColor.Red;
+            if (antX < 2)
+                Program.antX = fieldWidth - 2;
+            if (antX > fieldWidth - 2)
+                Program.antX = 2;
+            if (antY < 2)
+                Program.antY = fieldHeight - 2;
+            if (antY > fieldHeight - 2)
+                Program.antY = 2;
+
+            //SetCursorPosition(antX, antY);
+            //ForegroundColor = ConsoleColor.Red;
             //Task.Run(() => Beep(1000, 50));
-            Write("+");
-            Thread.Sleep(sleep);
+            //Write("+");
+            //Thread.Sleep(sleep);
         }
 
         public enum Cell
         {
             Black,
-            White
-        }
-
-        public enum Direction
-        {
-            Up,
-            Down,
-            Left,
-            Right
+            White,
+            Empty
         }
     }
 }
