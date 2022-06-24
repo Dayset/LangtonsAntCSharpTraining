@@ -7,7 +7,7 @@ namespace LangtonsAnt
 {
     public class Program
     {
-        private static readonly int sleep = 0;
+        private static readonly int sleep = 0;  //With 0 ant is crazy!
 
         public static int antX { get; private set; }
         public static int antY { get; private set; }
@@ -35,10 +35,15 @@ namespace LangtonsAnt
             {
                 for (int j = 0; j < fieldWidth; j++)
                 {
-                    if (random.Next(100) < 0) //0 - disable 1 -enable
+                    if (random.Next(1000) < 0) //0 - disable 1 -enable
+                    {
                         //This generates black cells
-                        //With chance of 1% but not drawing on map
+                        //With chance of 0.1% but not drawing on map
+                        //And looks ugly due to WriteLine(GrayBG)
+                        SetCursorPosition(j, i);
+                        Write("#");
                         map[j, i] = Cell.Black;
+                    }
                     else
                         map[j, i] = Cell.White;
                 }
@@ -51,7 +56,9 @@ namespace LangtonsAnt
 
             direction = random.Next(0, 4);
             DrawAnt(fieldWidth, fieldHeight);
-            for (int i = 0; i < 5000000; i++)
+
+            //Little stupidity, i just want to have a count of steps.
+            for (int i = 0; i < 50000000; i++)
             {
                 Thread.Sleep(sleep);
                 if (map[antX, antY] == Cell.Black)
@@ -71,6 +78,7 @@ namespace LangtonsAnt
                     DrawAnt(fieldWidth, fieldHeight);
                 }
             }
+
             ReadKey();
         }
 
